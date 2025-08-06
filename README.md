@@ -92,6 +92,9 @@ python3 run_agent.py --agent-file student_agents/your_agent.py --verbose
 
 # Test different environment sizes
 python3 run_agent.py --agent-file student_agents/your_agent.py --size 10 --dirt-rate 0.5 --ui
+
+# Test with reproducible results using a seed
+python3 run_agent.py --agent-file student_agents/your_agent.py --seed 12345 --ui
 ```
 
 ### Recording and Replay
@@ -157,6 +160,7 @@ def think(self):
 3. **Add print statements** to understand decision-making
 4. **Test different environments** with `--size` and `--dirt-rate`
 5. **Record sessions** to analyze behavior later
+6. **Use `--seed`** for reproducible testing with identical environments
 
 ## File Structure
 

@@ -132,7 +132,8 @@ class BaseAgent(ABC):
             self._load_replay_data()
     
     def connect_to_environment(self, sizeX: int = 8, sizeY: int = 8, 
-                             dirt_rate: float = 0.3) -> bool:
+                             dirt_rate: float = 0.3, 
+                             start_x: int = None, start_y: int = None) -> bool:
         """
         Conecta el agente a un nuevo entorno en el servidor.
         """
@@ -145,7 +146,7 @@ class BaseAgent(ABC):
             return False
         
         self.env_id = self.client.create_environment(sizeX, sizeY, 
-                                                   sizeX // 2, sizeY // 2, 
+                                                   start_x, start_y, 
                                                    dirt_rate)
         if not self.env_id:
             print(f"[{self.agent_name}] Failed to create environment")

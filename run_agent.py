@@ -3,6 +3,7 @@
 import sys
 import argparse
 import time
+import random
 import importlib.util
 from pathlib import Path
 from base_agent import BaseAgent
@@ -57,7 +58,8 @@ def run_single_agent(agent_class, server_url: str, size_x: int, size_y: int,
                     dirt_rate: float, verbose: bool, agent_id: int = 0, 
                     enable_ui: bool = False, record_game: bool = False, 
                     replay_file: str = None, cell_size: int = 60, fps: int = 10,
-                    auto_exit_on_finish: bool = True, live_stats: bool = False) -> dict:
+                    auto_exit_on_finish: bool = True, live_stats: bool = False,
+                    seed: int = None) -> dict:
     """
     Ejecuta una simulación con un agente específico.
     
@@ -74,11 +76,16 @@ def run_single_agent(agent_class, server_url: str, size_x: int, size_y: int,
         replay_file: Archivo de replay a reproducir
         cell_size: Tamaño de cada celda en pixels (para UI)
         fps: Frames per second para la UI
+        seed: Semilla para reproducibilidad (None para aleatorio)
         
     Returns:
         Diccionario con resultados de la simulación
     """
     start_time = time.time()
+    
+    # Set random seed if provided
+    if seed is not None:
+        random.seed(seed)
     
     try:
         # Crear instancia del agente
@@ -95,7 +102,12 @@ def run_single_agent(agent_class, server_url: str, size_x: int, size_y: int,
         
         # Conectar al entorno (solo si no es replay)
         if not replay_file:
-            if not agent.connect_to_environment(size_x, size_y, dirt_rate):
+            # Always use random starting position
+            start_x = random.randint(0, size_x - 1)
+            start_y = random.randint(0, size_y - 1)
+            connection_success = agent.connect_to_environment(size_x, size_y, dirt_rate, start_x, start_y)
+            
+            if not connection_success:
                 return {
                     'agent_id': agent_id,
                     'agent_class': agent_class.__name__,
@@ -177,6 +189,8 @@ def main():
                        help='Disable auto-exit when simulation finishes (UI stays open)')
     parser.add_argument('--live-stats', action='store_true', default=False,
                        help='Show real-time statistics during simulation (pretty status bar)')
+    parser.add_argument('--seed', type=int, default=None,
+                       help='Random seed for reproducible simulations')
     
     args = parser.parse_args()
     
@@ -215,7 +229,7 @@ def main():
                             args.size, args.size, args.dirt_rate, 
                             args.verbose, 0, args.ui, args.record,
                             args.replay, args.cell_size, args.fps,
-                            not args.no_auto_exit, args.live_stats)
+                            not args.no_auto_exit, args.live_stats, args.seed)
     
     if result['success']:
         print(f"Simulation completed successfully!")
