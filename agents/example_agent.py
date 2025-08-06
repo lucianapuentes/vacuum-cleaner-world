@@ -1,5 +1,6 @@
 import sys
 import os
+from typing import Optional
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from base_agent import BaseAgent
 
@@ -18,8 +19,16 @@ class ExampleAgent(BaseAgent):
     4. Registra el agente en run_agent.py
     """
     
-    def __init__(self, server_url: str = "http://localhost:5000"):
-        super().__init__(server_url, "ExampleAgent")
+    def __init__(self, server_url: str = "http://localhost:5000", 
+                 enable_ui: bool = False,
+                 record_game: bool = False, 
+                 replay_file: Optional[str] = None,
+                 cell_size: int = 60,
+                 fps: int = 10,
+                 auto_exit_on_finish: bool = True,
+                 live_stats: bool = False):
+        super().__init__(server_url, "ExampleAgent", enable_ui, record_game, 
+                        replay_file, cell_size, fps, auto_exit_on_finish, live_stats)
         
         # Estado interno para movimiento circular
         self.movement_sequence = [self.up, self.right, self.down, self.left]
