@@ -390,53 +390,6 @@ python3 run_agent.py --agent-file my_agent.py --size 12 --dirt-rate 0.8
 5. **Test Incrementally**: Start simple, then add complexity
 6. **Profile Performance**: Use `--verbose` to monitor your agent's behavior
 
-### Common Patterns
-
-#### Simple Reflex Agent
-```python
-def think(self):
-    perception = self.get_perception()
-    if perception.get('is_dirty', False):
-        return self.suck()
-    else:
-        return self.up()  # or random choice
-```
-
-#### State-Based Agent
-```python
-def think(self):
-    perception = self.get_perception()
-    
-    if perception.get('is_dirty', False):
-        return self.suck()
-    
-    # Update internal state
-    self._update_exploration_state(perception)
-    
-    # Make decision based on state
-    return self._choose_next_action()
-```
-
-#### Grid-Aware Agent
-```python
-def think(self):
-    perception = self.get_perception()
-    state = self.get_environment_state()
-    
-    if perception.get('is_dirty', False):
-        return self.suck()
-    
-    # Use full grid information
-    grid = state.get('grid', [])
-    dirty_positions = self._find_dirty_positions(grid)
-    
-    if dirty_positions:
-        target = self._choose_target(dirty_positions)
-        return self._move_towards(target)
-    
-    return self.idle()
-```
-
 ### Troubleshooting
 
 **"No valid agent class found"**
