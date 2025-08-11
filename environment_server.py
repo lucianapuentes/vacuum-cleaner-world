@@ -16,10 +16,10 @@ class EnvironmentServer:
         self.environments = {}
         self.lock = threading.Lock()
     
-    def create_environment(self, sizeX, sizeY, init_posX, init_posY, dirt_rate):
+    def create_environment(self, sizeX, sizeY, init_posX, init_posY, dirt_rate, seed=None):
         env_id = str(uuid.uuid4())
         with self.lock:
-            env = Environment(sizeX, sizeY, init_posX, init_posY, dirt_rate)
+            env = Environment(sizeX, sizeY, init_posX, init_posY, dirt_rate, seed)
             self.environments[env_id] = {
                 'environment': env,
                 'created_at': time.time(),
@@ -66,6 +66,7 @@ def create_environment():
         init_posX = data.get('init_posX', sizeX // 2)
         init_posY = data.get('init_posY', sizeY // 2)
         dirt_rate = data.get('dirt_rate', 0.3)
+        seed = data.get('seed', None)
         
         if not (1 <= sizeX <= 256 and 1 <= sizeY <= 256):
             return jsonify({'error': 'Invalid size parameters'}), 400
@@ -76,7 +77,7 @@ def create_environment():
         if not (0.0 <= dirt_rate <= 1.0):
             return jsonify({'error': 'Invalid dirt rate'}), 400
         
-        env_id = env_server.create_environment(sizeX, sizeY, init_posX, init_posY, dirt_rate)
+        env_id = env_server.create_environment(sizeX, sizeY, init_posX, init_posY, dirt_rate, seed)
         
         return jsonify({
             'environment_id': env_id,

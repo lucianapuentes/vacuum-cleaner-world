@@ -105,7 +105,7 @@ def run_single_agent(agent_class, server_url: str, size_x: int, size_y: int,
             # Always use random starting position
             start_x = random.randint(0, size_x - 1)
             start_y = random.randint(0, size_y - 1)
-            connection_success = agent.connect_to_environment(size_x, size_y, dirt_rate, start_x, start_y)
+            connection_success = agent.connect_to_environment(size_x, size_y, dirt_rate, start_x, start_y, seed)
             
             if not connection_success:
                 return {

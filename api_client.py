@@ -12,7 +12,7 @@ class VacuumEnvironmentClient:
     def create_environment(self, sizeX: int = 8, sizeY: int = 8, 
                           init_posX: Optional[int] = None, 
                           init_posY: Optional[int] = None, 
-                          dirt_rate: float = 0.3) -> Optional[str]:
+                          dirt_rate: float = 0.3, seed: Optional[int] = None) -> Optional[str]:
         if init_posX is None:
             init_posX = sizeX // 2
         if init_posY is None:
@@ -25,6 +25,9 @@ class VacuumEnvironmentClient:
             'init_posY': init_posY,
             'dirt_rate': dirt_rate
         }
+        
+        if seed is not None:
+            data['seed'] = seed
         
         try:
             response = self.session.post(f"{self.server_url}/api/environment", 

@@ -11,7 +11,7 @@ class Action(Enum):
     IDLE = "idle"
 
 class Environment:
-    def __init__(self, sizeX, sizeY, init_posX, init_posY, dirt_rate):
+    def __init__(self, sizeX, sizeY, init_posX, init_posY, dirt_rate, seed=None):
         self.sizeX = sizeX
         self.sizeY = sizeY
         self.grid = np.zeros((sizeY, sizeX), dtype=int)
@@ -21,6 +21,9 @@ class Environment:
         self.performance = 0
         self.actions_taken = 0
         self.max_actions = 1000
+        
+        if seed is not None:
+            random.seed(seed)
         
         self._initialize_dirt()
     
