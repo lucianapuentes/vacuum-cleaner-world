@@ -110,6 +110,7 @@ class BaseAgent(ABC):
         self.cleaning_timer = 0
         self.finish_time = None
         self.exit_delay = 3.0  # seconds to show final results before auto-exit
+        self.user_completion_reason = None  # Track user-initiated exits
         
         # Colores para la UI
         self.colors = {
@@ -179,15 +180,15 @@ class BaseAgent(ABC):
         """
         Desconecta el agente del servidor y limpia recursos.
         """
+        # Finalizar grabación si está activa (BEFORE deleting environment)
+        if self.record_game and self.game_recording['steps']:
+            self._save_recording()
+        
         if self.env_id and self.connected:
             self.client.delete_environment(self.env_id)
             print(f"[{self.agent_name}] Disconnected from environment {self.env_id}")
             self.env_id = None
             self.connected = False
-        
-        # Finalizar grabación si está activa
-        if self.record_game and self.game_recording['steps']:
-            self._save_recording()
         
         # Cerrar pygame si está activo
         if self.enable_ui and pygame.get_init():
@@ -582,11 +583,18 @@ class BaseAgent(ABC):
         """
         initial_state = self.get_environment_state()
         
+        # Count initial dirt cells
+        total_dirt_cells = 0
+        if initial_state and 'grid' in initial_state:
+            grid = initial_state['grid']
+            total_dirt_cells = sum(sum(row) for row in grid)
+        
         self.game_recording = {
             'metadata': {
                 'agent_type': self.agent_name,
                 'environment_size': [sizeX, sizeY],
                 'dirt_rate': dirt_rate,
+                'total_dirt_cells': total_dirt_cells,
                 'timestamp': datetime.now().isoformat(),
                 'server_url': self.server_url,
                 'environment_id': self.env_id
@@ -638,10 +646,32 @@ class BaseAgent(ABC):
         Guarda la grabación en un archivo JSON.
         """
         # Actualizar metadata final
+        final_state = self.get_environment_state()
+        completion_reason = "unknown"
+        
+        # Check for user-initiated exit first
+        if self.user_completion_reason:
+            completion_reason = self.user_completion_reason
+        # Check if API provides completion reason
+        elif final_state and final_state.get('completion_reason'):
+            completion_reason = final_state['completion_reason']
+        # Fallback: infer from final state
+        elif final_state:
+            grid = final_state.get('grid', [])
+            total_dirt = sum(sum(row) for row in grid) if grid else 0
+            actions_taken = final_state.get('actions_taken', 0)
+            
+            if total_dirt == 0:
+                completion_reason = "all_cleaned"
+            elif actions_taken >= 1000:
+                completion_reason = "max_steps_reached"
+        
         self.game_recording['metadata'].update({
             'final_performance': self.final_performance,
             'total_actions': self.total_actions,
-            'successful_actions': self.successful_actions
+            'successful_actions': self.successful_actions,
+            'completion_reason': completion_reason,
+            'steps_to_completion': self.total_actions
         })
         
         # Generar nombre de archivo
@@ -738,6 +768,7 @@ class BaseAgent(ABC):
                 elif event.key == pygame.K_MINUS:
                     self.speed = max(1, self.speed - 5)
                 elif event.key == pygame.K_ESCAPE:
+                    self.user_completion_reason = "user_exit"
                     self.running = False
     
     def _reset_simulation(self):

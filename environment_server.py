@@ -113,6 +113,7 @@ def get_environment_state(env_id):
         'actions_taken': env.actions_taken,
         'actions_remaining': env.get_actions_remaining(),
         'is_finished': bool(env.is_finished()),
+        'completion_reason': getattr(env, 'completion_reason', None),
         'grid': env.get_grid_copy().tolist()
     })
 
@@ -167,7 +168,8 @@ def execute_action(env_id):
                 'performance': new_performance,
                 'actions_taken': env.actions_taken,
                 'actions_remaining': env.get_actions_remaining(),
-                'is_finished': bool(env.is_finished())
+                'is_finished': bool(env.is_finished()),
+                'completion_reason': getattr(env, 'completion_reason', None)
             },
             'reward': new_performance - prev_performance
         })
@@ -187,7 +189,8 @@ def sense_environment(env_id):
         'position': [agent_x, agent_y],
         'is_dirty': bool(env.is_dirty()),
         'actions_remaining': env.get_actions_remaining(),
-        'is_finished': bool(env.is_finished())
+        'is_finished': bool(env.is_finished()),
+        'completion_reason': getattr(env, 'completion_reason', None)
     })
 
 @app.route('/api/environments', methods=['GET'])

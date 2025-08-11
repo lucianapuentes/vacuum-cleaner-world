@@ -21,6 +21,7 @@ class Environment:
         self.performance = 0
         self.actions_taken = 0
         self.max_actions = 1000
+        self.completion_reason = None
         
         if seed is not None:
             random.seed(seed)
@@ -69,6 +70,10 @@ class Environment:
     def is_dirty(self):
         return self.grid[self.agent_y, self.agent_x] == 1
     
+    def all_dirt_cleaned(self):
+        """Check if all dirt has been cleaned from the environment."""
+        return np.sum(self.grid) == 0
+    
     def get_performance(self):
         return self.performance
     
@@ -76,7 +81,15 @@ class Environment:
         return self.agent_x, self.agent_y
     
     def is_finished(self):
-        return self.actions_taken >= self.max_actions
+        if self.actions_taken >= self.max_actions:
+            if self.completion_reason is None:
+                self.completion_reason = "max_steps_reached"
+            return True
+        if self.all_dirt_cleaned():
+            if self.completion_reason is None:
+                self.completion_reason = "all_cleaned"
+            return True
+        return False
     
     def get_actions_remaining(self):
         return self.max_actions - self.actions_taken
