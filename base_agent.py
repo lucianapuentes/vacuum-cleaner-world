@@ -66,6 +66,7 @@ class BaseAgent(ABC):
         # Estadísticas de la simulación
         self.total_actions = 0
         self.successful_actions = 0
+        self.final_performance = 0
         
         # Estadísticas avanzadas para live stats
         self.visited_positions = set()
@@ -395,6 +396,7 @@ class BaseAgent(ABC):
         
         final_state = self.get_environment_state()
         final_performance = final_state.get('performance', 0) if final_state else 0
+        self.final_performance = final_performance
         
         if self.live_stats:
             # Nueva línea final para las live stats
@@ -442,11 +444,14 @@ class BaseAgent(ABC):
                                 self.cleaning_timer = 0
                             
                             last_performance = new_performance
+                            self.final_performance = new_performance
                 else:
                     # Simulación terminada
                     if not self.paused:
                         self.paused = True
                         self.finish_time = time.time() if self.auto_exit_on_finish else None
+                        # Store final performance when simulation ends
+                        self.final_performance = last_performance
                         if verbose:
                             print(f"[{self.agent_name}] Simulation completed!")
                             if self.auto_exit_on_finish:
@@ -633,9 +638,8 @@ class BaseAgent(ABC):
         Guarda la grabación en un archivo JSON.
         """
         # Actualizar metadata final
-        final_state = self.get_environment_state()
         self.game_recording['metadata'].update({
-            'final_performance': final_state.get('performance', 0) if final_state else 0,
+            'final_performance': self.final_performance,
             'total_actions': self.total_actions,
             'successful_actions': self.successful_actions
         })
