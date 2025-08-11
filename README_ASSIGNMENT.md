@@ -19,7 +19,6 @@ from base_agent import BaseAgent
 class YourNameAgent(BaseAgent):
     """
     Your vacuum cleaner agent implementation.
-    Replace 'YourName' with your actual name.
     """
     
     def __init__(self, server_url="http://localhost:5000", **kwargs):
@@ -79,37 +78,6 @@ actions_taken = state.get('actions_taken', 0)   # Actions used so far
 
 ⚠️ **Important**: Global environment access may be restricted during evaluation to simulate realistic robot constraints. Design your agent to work primarily with local perception.
 
-## Example: Random Agent
-```python
-import random
-import sys
-import os
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from base_agent import BaseAgent
-
-class RandomAgent(BaseAgent):
-    def __init__(self, server_url="http://localhost:5000", **kwargs):
-        super().__init__(server_url, "RandomAgent", **kwargs)
-    
-    def get_strategy_description(self):
-        return "Random movement with cleaning"
-    
-    def think(self):
-        if not self.is_connected():
-            return False
-        
-        perception = self.get_perception()
-        if not perception or perception.get('is_finished', True):
-            return False
-        
-        # Clean if dirty
-        if perception.get('is_dirty', False):
-            return self.suck()
-        
-        # Move randomly
-        actions = [self.up, self.down, self.left, self.right]
-        return random.choice(actions)()
-```
 
 ## Assignment Requirements
 
@@ -146,6 +114,7 @@ python3 run_agent.py --agent-file student_agents/student_your_name_agent.py --re
 
 Your agent will be evaluated on:
 - **Performance Score**: Number of dirt cells cleaned
+- **Actions taken**: Number of actions taken to clean all dirt cells
 - **Efficiency**: How effectively you use your available actions
 - **Strategy**: Quality of your exploration and cleaning approach
 
@@ -155,6 +124,7 @@ Your agent will be evaluated on:
 2. Test your agent thoroughly before submission
 3. Your agent should complete the simulation without errors
 4. Include a clear strategy description in `get_strategy_description()`
+5. Pull your submission to `vacuum-clearn-comp-2025` repository
 
 ## Competition Mode Notice
 

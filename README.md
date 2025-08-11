@@ -4,6 +4,12 @@ A Python simulation environment for creating AI agents that clean rooms, based o
 
 ## Quick Start
 
+### 0. Set up a virtual environment (optional but recommended)
+```bash
+python3 -m venv vacuum-env
+source vacuum-env/bin/activate
+```
+
 ### 1. Install Requirements
 ```bash
 pip install -r requirements.txt
@@ -108,50 +114,15 @@ python3 run_agent.py --replay game_data/your_recording.json --ui
 
 ## Example Agents
 
-Study these example agents in the `agents/` folder:
+Study an example agent in the `agents/` folder:
 
 - **`example_agent.py`** - Basic template with circular movement
-- **`random_agent.py`** - Random movement strategy
-- **`hybrid_agent.py`** - Combination of cleaning and random exploration
-- **`reflex_agent.py`** - Systematic cleaning pattern
 
 ## Learning Resources
 
 - **`USER_GUIDE.md`** - Comprehensive development guide
 - **`README_ASSIGNMENT.md`** - Assignment-specific instructions
 - **`API_DOCUMENTATION.md`** - Technical API reference
-
-## Common Patterns
-
-### Simple Reflex Agent
-```python
-def think(self):
-    perception = self.get_perception()
-    
-    if perception.get('is_dirty', False):
-        return self.suck()
-    else:
-        return self.up()
-```
-
-### Memory-Based Agent
-```python
-def __init__(self, **kwargs):
-    super().__init__(**kwargs)
-    self.visited = set()
-
-def think(self):
-    perception = self.get_perception()
-    current_pos = perception.get('position', (0, 0))
-    self.visited.add(current_pos)
-    
-    if perception.get('is_dirty', False):
-        return self.suck()
-    
-    # Use memory to guide exploration
-    # Your exploration logic here
-    return self.right()
-```
 
 ## Debugging Tips
 
@@ -173,29 +144,10 @@ cleaner-world/
 ├── base_agent.py             # Base class for all agents
 ├── environment_server.py     # Environment simulator
 ├── agents/                   # Example agents to study
-│   ├── example_agent.py
-│   ├── random_agent.py
-│   └── hybrid_agent.py
+│   └──example_agent.py
 ├── student_agents/           # Your agents go here
 └── game_data/               # Recorded sessions
 ```
 
-## Assignment Submission
-
-1. **File Naming**: `student_firstname_lastname_agent.py`
-2. **Location**: Place in `student_agents/` directory
-3. **Testing**: Thoroughly test before submission
-4. **Documentation**: Include clear strategy description
-
-## Competition Notice
-
-Your instructor may evaluate agents in "competition mode" which simulates realistic robot constraints by limiting access to global information. Design agents that work well with local perception for best results.
-
-## Getting Help
-
-- Check the `USER_GUIDE.md` for detailed explanations
-- Study example agents in the `agents/` folder
-- Use `--verbose` and `--ui` flags for debugging
-- Test with different environment configurations
 
 Good luck with your AI agent!

@@ -271,7 +271,7 @@ curl -X POST http://localhost:5000/api/environment/{env_id}/action \
 
 ### Con BaseAgent (Recomendado)
 1. **Iniciar servidor**: `python environment_server.py`
-2. **Usar run_agent.py**: `python run_agent.py --agent-type reflex --ui --record`
+2. **Usar run_agent.py**: `python run_agent.py --agent-file agents/example_agent.py --ui --record`
 3. **BaseAgent maneja**: Conexión, simulación, UI, grabación automáticamente
 4. **Finalización**: Desconexión y limpieza automática
 
