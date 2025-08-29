@@ -7,14 +7,14 @@ DIRT_RATES = [0.1, 0.2, 0.4, 0.8]
 REPEATS = 10
 
 # Ruta al archivo del agente reflexivo
-AGENT_FILE = "agents/random_agent.py"   # <- ajustado a tu estructura
+AGENT_FILE = "agents/reflex_agent.py"   # <- ajustado a tu estructura
 
 # URL del servidor del entorno
 SERVER_URL = "http://localhost:5000"
 
 def main():
     agent_class = load_agent_from_file(AGENT_FILE)
-
+    semilla=12345
     results = []
 
     for (sx, sy) in ENTORNOS:
@@ -26,7 +26,8 @@ def main():
                     sx, sy,
                     dirt_rate,
                     verbose=False,
-                    agent_id=run
+                    agent_id=run,
+                    seed=semilla
                 )
 
                 if result["success"]:
@@ -41,12 +42,14 @@ def main():
                         "success_rate": result["success_rate"],
                         "agent_class": result["agent_class"],
                         "strategy": result["strategy"],
+                        "seed": semilla
                     })
+                    
                 else:
                     print(f"❌ Error en entorno {sx}x{sy}, dirt={dirt_rate}, run={run}: {result['error']}")
-
+            semilla+=1
     # Guardar a CSV con todos los runs
-    with open("agent_runs.csv", "w", newline="") as f:
+    with open("agent_runs2.csv", "w", newline="") as f:
         writer = csv.DictWriter(f, fieldnames=results[0].keys())
         writer.writeheader()
         writer.writerows(results)
